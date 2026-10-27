@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>犬と休日 ごはん日記</title>
+<meta name="theme-color" content="#264A36">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ごはん日記">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* layout: スマホ1カラム。ロゴ → うちの子 → 書く → 日記（新しい順） → お店とバックアップ。ブランドの4色のみ・単一テーマ */
+:root{
+  --forest:#264A36; --ecru:#F4EFE6; --char:#242B25; --brass:#C29B38;
+  --surface:#EBE4D7; --muted:#5E655F; --line:#DDD5C6;
+  --f-head:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --f-body:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
+  color-scheme:light;
+}
+html{background:var(--surface)}
+body{background:var(--surface);color:var(--char);font-family:var(--f-body);font-size:15px;line-height:1.7;-webkit-tap-highlight-color:transparent}
+.wrap{max-width:600px;margin:0 auto;padding-block:12px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+header{display:grid;justify-items:center;gap:2px;padding-top:6px}
+.logo{width:260px;height:84px;overflow:hidden;position:relative;max-width:100%}
+.logo img{position:absolute;width:530px;left:-135px;top:-46px;max-width:none}
+.apptitle{font-family:var(--f-head);font-size:1.05rem;letter-spacing:.2em;margin:0;display:flex;align-items:center;gap:10px}
+.apptitle::before,.apptitle::after{content:"";width:28px;height:1px;background:var(--brass)}
+h2{font-family:var(--f-head);font-size:1.05rem;margin:0;font-weight:600}
+.card{background:var(--ecru);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:10px;min-width:0}
+.dogs{display:flex;gap:10px;overflow-x:auto;padding-bottom:2px}
+.dog{flex:none;display:grid;justify-items:center;gap:4px;background:none;border:0;padding:0;font:inherit;color:var(--char);cursor:pointer;width:64px}
+.av{width:56px;height:56px;border-radius:50%;background:var(--surface);border:2px solid transparent;display:grid;place-items:center;overflow:hidden;font-family:var(--f-head);font-size:1.2rem;color:var(--forest)}
+.av img{width:100%;height:100%;object-fit:cover}
+.dog[aria-pressed="true"] .av{border-color:var(--forest)}
+.dog small{font-size:.75rem;max-width:64px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dog.add .av{border:1px dashed var(--muted);color:var(--muted);font-family:var(--f-body)}
+.hint{font-size:.85rem;color:var(--muted);margin:0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chips label{position:relative}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips span{display:inline-block;padding:4px 12px;border:1px solid var(--line);border-radius:999px;cursor:pointer;font-size:.88rem;background:var(--surface)}
+.chips input:checked+span{background:var(--forest);border-color:var(--forest);color:var(--ecru)}
+.chips input:focus-visible+span{outline:2px solid var(--forest);outline-offset:2px}
+input[type=date],input[type=number],input[type=text],textarea{font:inherit;font-size:16px;color:var(--char);background:#fff0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:0}
+input[type=number]{width:5.5em}
+textarea{width:100%;box-sizing:border-box;min-height:96px;resize:vertical}
+.filein{position:absolute;opacity:0;width:1px;height:1px}
+.pbtn{display:inline-flex;align-items:center;padding:6px 14px;border:1px dashed var(--forest);border-radius:8px;color:var(--forest);cursor:pointer;font-size:.9rem}
+.filein:focus-visible+.pbtn{outline:2px solid var(--forest);outline-offset:2px}
+.thumbs{display:flex;gap:6px;flex-wrap:wrap}
+.thumbs div{position:relative}
+.thumbs img{width:64px;height:64px;object-fit:cover;border-radius:8px;display:block}
+.x{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--char);color:var(--ecru);cursor:pointer;font-size:12px;line-height:22px;padding:0}
+.btn{font:inherit;font-weight:700;background:var(--forest);color:var(--ecru);border:0;border-radius:10px;padding:10px 20px;cursor:pointer}
+.btn.sub{background:transparent;color:var(--forest);border:1px solid var(--forest);font-weight:500}
+.btn:disabled{opacity:.5}
+button:focus-visible,.dog:focus-visible{outline:2px solid var(--forest);outline-offset:2px}
+.status{font-size:.85rem;color:var(--muted);margin:0;min-height:1.3em}
+.feedhead{display:flex;justify-content:space-between;align-items:baseline;padding-inline:2px}
+.feed{display:grid;gap:12px}
+.entry .meta{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;font-size:.82rem;color:var(--muted)}
+.entry .meta b{font-family:var(--f-head);color:var(--char);font-size:1.05rem;font-weight:600}
+.tag{background:var(--surface);color:var(--char);border-radius:999px;padding:0 9px;font-size:.78rem}
+.pics{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px}
+.pics button{padding:0;border:0;background:none;cursor:zoom-in}
+.pics img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;display:block}
+.note{white-space:pre-wrap;margin:0;overflow-wrap:anywhere}
+.del{justify-self:end;font:inherit;font-size:.78rem;background:none;border:0;color:var(--muted);cursor:pointer;padding:2px 4px}
+.del.armed{color:var(--char);font-weight:700;text-decoration:underline}
+.empty{color:var(--muted);text-align:center;padding:18px 0;font-size:.9rem;margin:0}
+footer{display:grid;gap:12px}
+.shop{background:var(--forest);color:var(--ecru);border-radius:12px;padding:16px;display:grid;gap:4px;font-size:.88rem}
+.shop .name{font-family:var(--f-head);font-size:1.15rem;letter-spacing:.06em}
+.shop .rule{height:1px;background:var(--brass);width:40px;margin:4px 0}
+.shop a{color:var(--ecru)}
+dialog{border:0;border-radius:14px;padding:18px;background:var(--ecru);color:var(--char);width:min(92vw,420px);box-sizing:border-box}
+dialog::backdrop{background:rgba(36,43,37,.55)}
+dialog form{display:grid;gap:12px}
+dialog label.f{display:grid;gap:4px;font-size:.85rem;color:var(--muted)}
+#viewer{padding:0;background:var(--char);width:auto;max-width:96vw}
+#viewer img{display:block;max-width:96vw;max-height:88vh}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="logo"><img src="logo-h.svg" alt="-犬と休日- Gear &amp; Food"></div>
+    <p class="apptitle">ごはん日記</p>
+  </header>
+
+  <section class="card" aria-labelledby="h-dogs">
+    <h2 id="h-dogs">うちの子</h2>
+    <div class="dogs" id="dogs"></div>
+    <p class="hint" id="doghint"></p>
+  </section>
+
+  <form class="card" id="form" aria-labelledby="h-write">
+    <h2 id="h-write">今日の記録</h2>
+    <div class="row">
+      <input type="date" id="date" aria-label="日付">
+      <label class="row" style="gap:4px;font-size:.88rem">体重 <input type="number" id="weight" step="0.1" min="0.5" max="90" inputmode="decimal" aria-label="体重（任意）"> kg</label>
+    </div>
+    <div class="chips row" id="who"></div>
+    <textarea id="note" placeholder="気づいたこと（食べっぷり、うんち、元気、作ったごはん など）"></textarea>
+    <div class="row">
+      <input type="file" id="file" class="filein" accept="image/*" multiple>
+      <label for="file" class="pbtn">＋ 写真</label>
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+    <div class="row" style="justify-content:space-between">
+      <p class="status" id="status" aria-live="polite"></p>
+      <button class="btn" type="submit" id="save">残す</button>
+    </div>
+  </form>
+
+  <section aria-labelledby="h-feed" style="display:grid;gap:10px">
+    <div class="feedhead"><h2 id="h-feed">日記</h2><span class="hint" id="count"></span></div>
+    <div class="feed" id="feed"><p class="empty">読み込んでいます…</p></div>
+  </section>
+
+  <footer>
+    <div class="card">
+      <h2>データの保存について</h2>
+      <p class="hint">記録と写真はこのスマホの中だけに保存されます。お店には送られません。機種変更やブラウザのデータ削除で消えるので、ときどきバックアップしてください。</p>
+      <div class="row">
+        <button class="btn sub" type="button" id="export">バックアップを書き出す</button>
+        <input type="file" id="importfile" class="filein" accept="application/json,.json">
+        <label for="importfile" class="pbtn">バックアップから戻す</label>
+      </div>
+      <p class="status" id="bstatus" aria-live="polite"></p>
+    </div>
+    <div class="shop">
+      <span class="name">-犬と休日- Gear &amp; Food</span>
+      <span>いい道具といいごはん</span>
+      <span class="rule" aria-hidden="true"></span>
+      <span>佐世保市稲荷町／2027年2月 開店</span>
+      <span>土日祝 10:00–18:00／予約優先・愛犬同伴</span>
+      <a href="https://www.instagram.com/inu_to_kyujitsu/" target="_blank" rel="noopener">Instagram @inu_to_kyujitsu</a>
+    </div>
+  </footer>
+</div>
+
+<dialog id="dogdlg">
+  <form method="dialog" id="dogform">
+    <h2 id="dogdlg-t">愛犬を登録</h2>
+    <label class="f">名前<input type="text" id="dname" maxlength="20" required></label>
+    <label class="f">誕生日（任意）<input type="date" id="dbirth"></label>
+    <div class="row">
+      <div class="av" id="dav" style="width:56px;height:56px"></div>
+      <input type="file" id="dfile" class="filein" accept="image/*">
+      <label for="dfile" class="pbtn">写真を選ぶ</label>
+    </div>
+    <div class="row" style="justify-content:space-between">
+      <button type="button" class="del" id="ddel" hidden>この子を削除</button>
+      <div class="row" style="margin-left:auto">
+        <button type="button" class="btn sub" id="dcancel">やめる</button>
+        <button type="submit" class="btn" value="ok">保存</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+<dialog id="viewer" aria-label="写真"><img id="vimg" alt="記録の写真"></dialog>
+
+<script>
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+$('date').value=ymd(new Date());
+
+// ---- storage (IndexedDB, この端末のみ) ----
+let dbp=null;
+function openDB(){if(!dbp)dbp=new Promise((res,rej)=>{try{const r=indexedDB.open('inu-gohan',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('dogs',{keyPath:'id'});d.createObjectStore('entries',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});return dbp}
+async function op(store,mode,fn){const d=await openDB();return new Promise((res,rej)=>{const t=d.transaction(store,mode);const q=fn(t.objectStore(store));t.oncomplete=()=>res(q&&q.result);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)})}
+const getAll=s=>op(s,'readonly',st=>st.getAll());
+const put=(s,v)=>op(s,'readwrite',st=>st.put(v));
+const remove=(s,k)=>op(s,'readwrite',st=>st.delete(k));
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch{}
+
+// ---- state ----
+let dogs=[],entries=[],filter=null,pending=[],armed=null,urls=[],editing=null,dogPhoto=undefined;
+const url=b=>{const u=URL.createObjectURL(b);urls.push(u);return u};
+function shrink(file,max){return new Promise((res,rej)=>{const img=new Image(),u=URL.createObjectURL(file);img.onload=()=>{const s=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(u);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.85)};img.onerror=()=>{URL.revokeObjectURL(u);rej()};img.src=u})}
+function age(b){if(!b)return'';const d=new Date(b),n=new Date();let y=n.getFullYear()-d.getFullYear();if(n<new Date(n.getFullYear(),d.getMonth(),d.getDate()))y--;return y>=0?y+'歳':''}
+
+// ---- render ----
+function avatar(d){const a=document.createElement('div');a.className='av';if(d.photo){const i=document.createElement('img');i.src=url(d.photo);i.alt='';a.append(i)}else a.textContent=d.name.slice(0,1);return a}
+function renderDogs(){
+  const box=$('dogs');box.innerHTML='';
+  dogs.forEach(d=>{const b=document.createElement('button');b.type='button';b.className='dog';b.setAttribute('aria-pressed',filter===d.id);const s=document.createElement('small');s.textContent=d.name;b.append(avatar(d),s);
+    let t;b.addEventListener('pointerdown',()=>{t=setTimeout(()=>{t=null;openDog(d)},550)});b.addEventListener('pointerup',()=>clearTimeout(t));b.addEventListener('pointerleave',()=>clearTimeout(t));
+    b.addEventListener('click',()=>{if(t===null)return;filter=filter===d.id?null:d.id;renderAll()});box.append(b)});
+  const add=document.createElement('button');add.type='button';add.className='dog add';add.innerHTML='<div class="av">＋</div><small>登録</small>';add.onclick=()=>openDog(null);box.append(add);
+  $('doghint').textContent=dogs.length?'タップでその子の日記だけ表示、長押しで編集':'まず愛犬を登録しましょう（記録だけでも使えます）';
+  const who=$('who');const sel=new Set([...who.querySelectorAll('input:checked')].map(i=>i.value));if(!who.dataset.init&&filter)sel.add(filter);
+  who.innerHTML='';dogs.forEach(d=>{const l=document.createElement('label');l.innerHTML=`<input type="checkbox" id="w-${d.id}" value="${d.id}"><span></span>`;l.querySelector('span').textContent=d.name;l.querySelector('input').checked=sel.has(d.id)||dogs.length===1;who.append(l)});
+}
+function renderFeed(){
+  const feed=$('feed');feed.innerHTML='';
+  const list=entries.filter(e=>!filter||(e.dogs||[]).includes(filter)).sort((a,b)=>(b.date+b.created).localeCompare(a.date+a.created));
+  const fd=dogs.find(d=>d.id===filter);$('count').textContent=(fd?fd.name+'・':'')+list.length+'件';
+  if(!list.length){const p=document.createElement('p');p.className='empty';p.textContent=fd?fd.name+'の記録はまだありません。':'まだ記録がありません。写真か気づきを残してみましょう。';feed.append(p);return}
+  for(const e of list){
+    const el=document.createElement('article');el.className='card entry';
+    const m=document.createElement('div');m.className='meta';const b=document.createElement('b');const[,mo,da]=e.date.split('-');b.textContent=`${+mo}月${+da}日`;m.append(b);
+    (e.dogs||[]).forEach(id=>{const d=dogs.find(x=>x.id===id);if(!d)return;const t=document.createElement('span');t.className='tag';t.textContent=d.name;m.append(t)});
+    if(e.weight){const w=document.createElement('span');w.textContent=e.weight+'kg';m.append(w)}
+    el.append(m);
+    if(e.photos&&e.photos.length){const g=document.createElement('div');g.className='pics';e.photos.forEach(p=>{const bt=document.createElement('button');bt.type='button';bt.setAttribute('aria-label','写真を大きく見る');const i=document.createElement('img');const u=url(p);i.src=u;i.alt='';i.loading='lazy';bt.append(i);bt.onclick=()=>{$('vimg').src=u;$('viewer').showModal()};g.append(bt)});el.append(g)}
+    if(e.note){const p=document.createElement('p');p.className='note';p.textContent=e.note;el.append(p)}
+    const del=document.createElement('button');del.className='del';del.type='button';del.textContent=armed===e.id?'もう一度押すと削除':'削除';if(armed===e.id)del.classList.add('armed');
+    del.onclick=async()=>{if(armed!==e.id){armed=e.id;renderFeed();return}armed=null;await remove('entries',e.id);entries=entries.filter(x=>x.id!==e.id);renderFeed()};
+    el.append(del);feed.append(el);
+  }
+}
+function renderAll(){urls.forEach(u=>URL.revokeObjectURL(u));urls=[];renderDogs();renderFeed();renderThumbs()}
+$('viewer').addEventListener('click',()=>$('viewer').close());
+
+// ---- compose ----
+function renderThumbs(){const t=$('thumbs');t.innerHTML='';pending.forEach((p,i)=>{const d=document.createElement('div'),im=document.createElement('img');im.src=url(p);im.alt='追加する写真';const x=document.createElement('button');x.type='button';x.className='x';x.textContent='×';x.setAttribute('aria-label','この写真を外す');x.onclick=()=>{pending.splice(i,1);renderThumbs()};d.append(im,x);t.append(d)})}
+$('file').addEventListener('change',async e=>{for(const f of [...e.target.files].slice(0,Math.max(0,8-pending.length))){try{pending.push(await shrink(f,1440))}catch{$('status').textContent='読み込めない写真がありました'}}e.target.value='';renderThumbs()});
+$('form').addEventListener('submit',async ev=>{
+  ev.preventDefault();const note=$('note').value.trim(),w=parseFloat($('weight').value);
+  if(!note&&!pending.length&&!w){$('status').textContent='写真か気づきを入れてください';return}
+  const e={id:uid(),date:$('date').value||ymd(new Date()),dogs:[...$('who').querySelectorAll('input:checked')].map(i=>i.value),note,photos:pending.slice(),created:new Date().toISOString()};if(w)e.weight=w;
+  $('save').disabled=true;
+  try{await put('entries',e);entries.push(e);pending=[];$('note').value='';$('weight').value='';$('status').textContent='残しました';renderAll()}
+  catch{$('status').textContent='保存できませんでした。スマホの空き容量を確認してください'}
+  finally{$('save').disabled=false}
+});
+
+// ---- dogs ----
+function openDog(d){editing=d;dogPhoto=undefined;$('dogdlg-t').textContent=d?'愛犬の情報':'愛犬を登録';$('dname').value=d?d.name:'';$('dbirth').value=d&&d.birth||'';$('ddel').hidden=!d;$('ddel').textContent='この子を削除';$('ddel').classList.remove('armed');setDav(d&&d.photo);$('dogdlg').showModal()}
+function setDav(b){const a=$('dav');a.innerHTML='';if(b){const i=document.createElement('img');i.src=url(b);i.alt='';a.append(i)}else a.textContent='写'}
+$('dfile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{dogPhoto=await shrink(f,400);setDav(dogPhoto)}catch{}});
+$('dcancel').onclick=()=>$('dogdlg').close();
+$('dogform').addEventListener('submit',async ev=>{ev.preventDefault();const name=$('dname').value.trim();if(!name)return;
+  const d=editing?{...editing}:{id:uid(),created:new Date().toISOString()};d.name=name;d.birth=$('dbirth').value||'';if(dogPhoto!==undefined)d.photo=dogPhoto;
+  await put('dogs',d);dogs=dogs.filter(x=>x.id!==d.id).concat(d);$('dogdlg').close();renderAll()});
+$('ddel').onclick=async()=>{const b=$('ddel');if(!b.classList.contains('armed')){b.classList.add('armed');b.textContent='日記は残ります。もう一度押すと削除';return}
+  await remove('dogs',editing.id);dogs=dogs.filter(x=>x.id!==editing.id);if(filter===editing.id)filter=null;$('dogdlg').close();renderAll()};
+
+// ---- backup ----
+const toData=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
+const toBlob=async s=>(await fetch(s)).blob();
+$('export').onclick=async()=>{
+  $('bstatus').textContent='準備中…';
+  try{
+    const out={app:'inu-gohan',v:1,exported:new Date().toISOString(),dogs:[],entries:[]};
+    for(const d of dogs)out.dogs.push({...d,photo:d.photo?await toData(d.photo):undefined});
+    for(const e of entries)out.entries.push({...e,photos:await Promise.all((e.photos||[]).map(toData))});
+    const name='ごはん日記_'+ymd(new Date()).replace(/-/g,'')+'.json';
+    const file=new File([JSON.stringify(out)],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'ごはん日記のバックアップ'});$('bstatus').textContent='書き出しました';return}catch(err){if(err&&err.name==='AbortError'){$('bstatus').textContent='';return}}}
+    const a=document.createElement('a');a.href=URL.createObjectURL(file);a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+    $('bstatus').textContent='書き出しました（ファイルに保存されます）';
+  }catch{$('bstatus').textContent='書き出せませんでした'}
+};
+$('importfile').addEventListener('change',async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const j=JSON.parse(await f.text());if(j.app!=='inu-gohan')throw 0;let n=0;
+    for(const d of j.dogs||[]){if(d.photo)d.photo=await toBlob(d.photo);await put('dogs',d)}
+    for(const x of j.entries||[]){x.photos=await Promise.all((x.photos||[]).map(toBlob));await put('entries',x);n++}
+    [dogs,entries]=await Promise.all([getAll('dogs'),getAll('entries')]);renderAll();$('bstatus').textContent=n+'件の記録を戻しました';
+  }catch{$('bstatus').textContent='このファイルは読み込めません（ごはん日記のバックアップを選んでください）'}});
+
+// ---- start ----
+(async()=>{
+  try{[dogs,entries]=await Promise.all([getAll('dogs'),getAll('entries')]);dogs.sort((a,b)=>(a.created||'').localeCompare(b.created||''))}
+  catch{$('feed').innerHTML='<p class="empty">このブラウザでは保存できません。SafariかChromeで開いてください。</p>'}
+  renderAll();
+})();
+let top1=false;try{top1=window.self===window.top}catch{}
+if(top1&&'serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').catch(()=>{})}
+</script>
+
+</body></html>
